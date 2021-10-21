@@ -14,8 +14,15 @@ import styles from './styles';
  */
 export default function LocalThumbnail() {
     return (
-        <View style = { styles.localThumbnail }>
-            <Thumbnail />
+        <View
+            pointerEvents = { 'none' }
+            style = {{
+                ...styles.localThumbnail,
+                width: '100%',
+                height: '100%',
+                position: 'absolute'
+            }}>
+            <Thumbnail disableTint = { true } />
         </View>
     );
 }

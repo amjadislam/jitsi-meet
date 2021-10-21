@@ -217,3 +217,7 @@ export const SET_ROOM = 'SET_ROOM';
  * }
  */
 export const SET_START_MUTED_POLICY = 'SET_START_MUTED_POLICY';
+
+export const TRACK_AUDIO_LEVEL_CHANGED = 'TRACK_AUDIO_LEVEL_CHANGED';
+
+export const NOISY_MIC = 'NOISY_MIC';

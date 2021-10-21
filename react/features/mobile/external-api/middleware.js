@@ -12,6 +12,8 @@ import {
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
     JITSI_CONFERENCE_URL_KEY,
+    TRACK_AUDIO_LEVEL_CHANGED,
+    NOISY_MIC,
     SET_ROOM,
     forEachConference,
     getCurrentConference,
@@ -158,7 +160,17 @@ MiddlewareRegistry.register(store => next => action => {
         !action.error.recoverable
             && _sendConferenceFailedOnConnectionError(store, action);
         break;
-
+    case NOISY_MIC:
+        sendEvent(store, type, { noisyMic: action.noisyMic });
+        break;
+    case TRACK_AUDIO_LEVEL_CHANGED:
+        console.log('TRACK_AUDIO_LEVEL_CHANGED ===> ', JSON.stringify({ micAudioLevel: `${action.arguments[1]}` }));
+        sendEvent(store, type, { micAudioLevel: `${action.arguments[1]}` });
+        break;
+    case 'CHAT_SCREEN_CLOSED':
+        // console.log('chat closed action _ 2');
+        sendEvent(store, type, { chatClosed: action.chatClosed });
+        break;
     case ENTER_PICTURE_IN_PICTURE:
         sendEvent(store, type, /* data */ {});
         break;

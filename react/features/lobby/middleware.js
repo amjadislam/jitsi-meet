@@ -25,8 +25,6 @@ import {
 import { KNOCKING_PARTICIPANT_SOUND_ID } from './constants';
 import { KNOCKING_PARTICIPANT_FILE } from './sounds';
 
-declare var APP: Object;
-
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case APP_WILL_MOUNT:
@@ -71,12 +69,6 @@ StateListenerRegistry.register(
                         name
                     }));
                     dispatch(playSound(KNOCKING_PARTICIPANT_SOUND_ID));
-                    if (typeof APP !== 'undefined') {
-                        APP.API.notifyKnockingParticipant({
-                            id,
-                            name
-                        });
-                    }
                 });
             });
 

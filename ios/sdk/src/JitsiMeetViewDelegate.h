@@ -111,4 +111,25 @@
  */
 - (void)videoMutedChanged:(NSDictionary *)data;
 
+/**
+ * Called when mic audio level changes.
+ *
+ * @param data Map with a "noisyMic" key with the mic noise changes.
+ */
+- (void) noisyMic:(NSDictionary *)data;
+
+/**
+ * Called when mic audio level changes.
+ *
+ * @param data Map with a "micAudioLevel" key with the mic audio changes.
+ */
+- (void) trackAudioLevelChanged:(NSDictionary *)data;
+
+/**
+ * Called when mic audio level changes.
+ *
+ * @param data Map with a "chatClosed" key with chat close status (always = 1).
+ */
+- (void) chatScreenClosed:(NSDictionary *)data;
+
 @end

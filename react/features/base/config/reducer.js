@@ -47,7 +47,7 @@ const INITIAL_RN_STATE = {
     // API, through the React Native bridge and eventually to JavaScript.
     // Because the audio levels are of no interest to the mobile app, it is
     // fastest to merely disable them.
-    disableAudioLevels: true,
+    disableAudioLevels: false,
 
     p2p: {
         disabledCodec: '',

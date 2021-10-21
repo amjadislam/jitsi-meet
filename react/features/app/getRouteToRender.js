@@ -1,5 +1,7 @@
+// @flow
 
 import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
+import type { Component } from 'react';
 
 import { isRoomValid } from '../base/conference';
 import { isSupportedBrowser } from '../base/environment';
@@ -7,9 +9,25 @@ import { toState } from '../base/redux';
 import { Conference } from '../conference';
 import { getDeepLinkingPage } from '../deep-linking';
 import { UnsupportedDesktopBrowser } from '../unsupported-browser';
-import { isWelcomePageUserEnabled } from '../welcome';
-import { BlankPage, WelcomePage } from '../welcome/components';
+import {
+    BlankPage,
+    WelcomePage,
+    isWelcomePageAppEnabled,
+    isWelcomePageUserEnabled
+} from '../welcome';
 
+/**
+ * Object describing application route.
+ *
+ * @typedef {Object} Route
+ * @property {Component} component - React Component constructor.
+ * @property {string|undefined} href - New location, in case navigation involves
+ * a location change.
+ */
+export type Route = {
+    component: Class<Component<*>>,
+    href: ?string
+};
 
 /**
  * Determines which route is to be rendered in order to depict a specific Redux
@@ -17,12 +35,36 @@ import { BlankPage, WelcomePage } from '../welcome/components';
  *
  * @param {(Function|Object)} stateful - THe redux store, state, or
  * {@code getState} function.
- * @returns {Promise<Object>}
+ * @returns {Promise<Route>}
  */
-export function _getRouteToRender(stateful) {
+export function _getRouteToRender(stateful: Function | Object): Promise<Route> {
     const state = toState(stateful);
 
+    if (navigator.product === 'ReactNative') {
+        return _getMobileRoute(state);
+    }
+
     return _getWebConferenceRoute(state) || _getWebWelcomePageRoute(state);
+}
+
+/**
+ * Returns the {@code Route} to display on the React Native app.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {Promise<Route>}
+ */
+function _getMobileRoute(state): Promise<Route> {
+    const route = _getEmptyRoute();
+
+    if (isRoomValid(state['features/base/conference'].room)) {
+        route.component = Conference;
+    } else if (isWelcomePageAppEnabled(state)) {
+        route.component = WelcomePage;
+    } else {
+        route.component = BlankPage;
+    }
+
+    return Promise.resolve(route);
 }
 
 /**
@@ -30,9 +72,9 @@ export function _getRouteToRender(stateful) {
  * a valid conference is being joined.
  *
  * @param {Object} state - The redux state.
- * @returns {Promise|undefined}
+ * @returns {Promise<Route>|undefined}
  */
-function _getWebConferenceRoute(state) {
+function _getWebConferenceRoute(state): ?Promise<Route> {
     if (!isRoomValid(state['features/base/conference'].room)) {
         return;
     }
@@ -69,9 +111,9 @@ function _getWebConferenceRoute(state) {
  * Returns the {@code Route} to display when trying to access the welcome page.
  *
  * @param {Object} state - The redux state.
- * @returns {Promise<Object>}
+ * @returns {Promise<Route>}
  */
-function _getWebWelcomePageRoute(state) {
+function _getWebWelcomePageRoute(state): Promise<Route> {
     const route = _getEmptyRoute();
 
     if (isWelcomePageUserEnabled(state)) {
@@ -95,9 +137,9 @@ function _getWebWelcomePageRoute(state) {
 /**
  * Returns the default {@code Route}.
  *
- * @returns {Object}
+ * @returns {Route}
  */
-function _getEmptyRoute() {
+function _getEmptyRoute(): Route {
     return {
         component: BlankPage,
         href: undefined

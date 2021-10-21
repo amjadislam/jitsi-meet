@@ -13,8 +13,8 @@ const useStyles = makeStyles(() => {
     return {
         speakerStatsSearch: {
             position: 'absolute',
-            right: '80px',
-            top: '8px'
+            right: '50px',
+            top: '-5px'
         }
     };
 });
@@ -70,3 +70,4 @@ function SpeakerStatsSearch({ onSearch }: Props) {
 }
 
 export default SpeakerStatsSearch;
+

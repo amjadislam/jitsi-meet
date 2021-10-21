@@ -77,6 +77,7 @@ public class BroadcastEvent {
     public enum Type {
         CONFERENCE_JOINED("org.jitsi.meet.CONFERENCE_JOINED"),
         CONFERENCE_TERMINATED("org.jitsi.meet.CONFERENCE_TERMINATED"),
+        TRACK_AUDIO_LEVEL_CHANGED("org.jitsi.meet.TRACK_AUDIO_LEVEL_CHANGED"),
         CONFERENCE_WILL_JOIN("org.jitsi.meet.CONFERENCE_WILL_JOIN"),
         AUDIO_MUTED_CHANGED("org.jitsi.meet.AUDIO_MUTED_CHANGED"),
         PARTICIPANT_JOINED("org.jitsi.meet.PARTICIPANT_JOINED"),
@@ -91,6 +92,7 @@ public class BroadcastEvent {
 
         private static final String CONFERENCE_WILL_JOIN_NAME = "CONFERENCE_WILL_JOIN";
         private static final String CONFERENCE_JOINED_NAME = "CONFERENCE_JOINED";
+        private static final String TRACK_AUDIO_LEVEL_CHANGED_NAME = "TRACK_AUDIO_LEVEL_CHANGED";
         private static final String CONFERENCE_TERMINATED_NAME = "CONFERENCE_TERMINATED";
         private static final String AUDIO_MUTED_CHANGED_NAME = "AUDIO_MUTED_CHANGED";
         private static final String PARTICIPANT_JOINED_NAME = "PARTICIPANT_JOINED";
@@ -127,6 +129,8 @@ public class BroadcastEvent {
                     return CONFERENCE_WILL_JOIN;
                 case CONFERENCE_JOINED_NAME:
                     return CONFERENCE_JOINED;
+                case TRACK_AUDIO_LEVEL_CHANGED_NAME:
+                    return TRACK_AUDIO_LEVEL_CHANGED;
                 case CONFERENCE_TERMINATED_NAME:
                     return CONFERENCE_TERMINATED;
                 case AUDIO_MUTED_CHANGED_NAME:

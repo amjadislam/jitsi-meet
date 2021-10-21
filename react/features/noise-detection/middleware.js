@@ -37,6 +37,15 @@ MiddlewareRegistry.register(store => next => action => {
                 }
             });
         conference.on(
+            JitsiConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED,
+            (...args) => {
+                console.log('micId', args[0], 'audioLevel : ', args[1]);
+                dispatch({
+                    type: 'TRACK_AUDIO_LEVEL_CHANGED',
+                    arguments: args
+                });
+            });
+        conference.on(
             JitsiConferenceEvents.NOISY_MIC, async () => {
                 const notification = await dispatch(showNotification({
                     titleKey: 'toolbar.noisyAudioInputTitle',

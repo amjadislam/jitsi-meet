@@ -134,7 +134,7 @@ class Chat extends AbstractChat<Props> {
             return (
                 <>
                     { this.props._isPollsEnabled && this._renderTabs()}
-                    <TouchmoveHack isModal = { true }><PollsPane /></TouchmoveHack>
+                    <PollsPane />
                     <KeyboardAvoider />
                 </>
             );
@@ -143,9 +143,7 @@ class Chat extends AbstractChat<Props> {
         return (
             <>
                 {this.props._isPollsEnabled && this._renderTabs()}
-                <TouchmoveHack
-                    flex = { true }
-                    isModal = { this.props._isModal }>
+                <TouchmoveHack isModal = { this.props._isModal }>
                     <MessageContainer
                         messages = { this.props._messages }
                         ref = { this._messageContainerRef } />

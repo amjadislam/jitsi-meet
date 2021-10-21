@@ -1,88 +1,94 @@
-# <p align="center">Jitsi Meet</p>
+# <p align="center">Customise Jitsi Meet SDK for SoundBird</p>
 
 Jitsi Meet is a set of Open Source projects which empower users to use and deploy
 video conferencing platforms with state-of-the-art video quality and features.
 
 <hr />
 
-<p align="center">
-<img src="https://raw.githubusercontent.com/jitsi/jitsi-meet/master/readme-img1.png" width="900" />
-</p>
+## Steps
 
-<hr />
+First run yarn install or npm install to install node_modules.
+#### yarn install or npm install
 
-Amongst others here are the main features Jitsi Meet offers:
+After that move to IOS folder and install pods by using install pod in IOS folder
 
-* Support for all current browsers
-* Mobile applications
-* Web and native SDKs for integration
-* HD audio and video
-* Content sharing
-* End-to-End Encryption
-* Raise hand and reactions
-* Chat with private conversations
-* Polls
-* Virtual backgrounds
+`cd ios`
 
-And many more!
+`pod install`
 
-## Using Jitsi Meet
+after that you have to do customisation in react/feature native classes for mobile apps customisation. Once complete customisation and test you have to create SDK and xcfarmeworks
 
-Using Jitsi Meet is straightforward, as it's browser based. Head over to [meet.jit.si](https://meet.jit.si) and give it a try. It's anonymous, scalable and free to use. All browsers are supported! 
+##IOS
+`mkdir -p ios/sdk/out`
 
-Using mobile? No problem, you can either use your mobile web browser or our fully-featured
-mobile apps:
+`xcodebuild clean \
+-workspace ios/jitsi-meet.xcworkspace \
+-scheme JitsiMeetSDK`
 
-| Android | Android (F-Droid) | iOS |
-|:-:|:-:|:-:|
-| [<img src="resources/img/google-play-badge.png" height="50">](https://play.google.com/store/apps/details?id=org.jitsi.meet) | [<img src="resources/img/f-droid-badge.png" height="50">](https://f-droid.org/en/packages/org.jitsi.meet/) | [<img src="resources/img/appstore-badge.png" height="50">](https://itunes.apple.com/us/app/jitsi-meet/id1165103905) |
+`xcodebuild archive \
+-workspace ios/jitsi-meet.xcworkspace \
+-scheme JitsiMeetSDK  \
+-configuration Release \
+-sdk iphonesimulator \
+-destination='generic/platform=iOS Simulator' \
+-archivePath ios/sdk/out/ios-simulator \
+VALID_ARCHS=x86_64 \
+ENABLE_BITCODE=NO \
+SKIP_INSTALL=NO \
+BUILD_LIBRARY_FOR_DISTRIBUTION=YES`
 
-If you are feeling adventurous and want to get an early scoop of the features as they are being
-developed you can also sign up for our open beta testing here:
+`xcodebuild archive \
+-workspace ios/jitsi-meet.xcworkspace \
+-scheme JitsiMeetSDK  \
+-configuration Release \
+-sdk iphoneos \
+-destination='generic/platform=iOS' \
+-archivePath ios/sdk/out/ios-device \
+VALID_ARCHS=arm64 \
+ENABLE_BITCODE=NO \
+SKIP_INSTALL=NO \
+BUILD_LIBRARY_FOR_DISTRIBUTION=YES`
 
-* [Android](https://play.google.com/apps/testing/org.jitsi.meet)
-* [iOS](https://testflight.apple.com/join/isy6ja7S)
+`xcodebuild -create-xcframework \
+-framework ios/sdk/out/ios-device.xcarchive/Products/Library/Frameworks/JitsiMeetSDK.framework \
+-framework ios/sdk/out/ios-simulator.xcarchive/Products/Library/Frameworks/JitsiMeetSDK.framework \
+-output ios/sdk/out/JitsiMeetSDK.xcframework
+cp -a node_modules/react-native-webrtc/apple/WebRTC.xcframework ios/sdk/out`
 
-## Running your own instance
 
-If you'd like to run your own Jitsi Meet installation head over to the [handbook](https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-start) to get started.
+After successfully building Jitsi Meet SDK for iOS, the 2 resulting XCFrameworks will be in the ios/sdk/out directory. copy both XCFrameworks and paste or replace at location 
+ios/Pods/JitsiMeetSDK/frameworks/
 
-We provide Debian packages and a comprehensive Docker setup to make deployments as simple as possible.
-Advanced users also have the possibility of building all the components from source.
+Run soundbird app again and sdk changes will reflect
 
-You can check the latest releases [here](https://jitsi.github.io/handbook/docs/releases).
 
-## Jitsi as a Service
+##Android
+Third-party React Native modules, which Jitsi Meet SDK for Android depends on, are download by NPM in source code or binary form. These need to be assembled into Maven artifacts, and then published to your local Maven repository. A script is provided to facilitate this. From the root of the jitsi-meet project repository, run:
 
-If you like the branding capabilities of running your own instance but you'd like
-to avoid dealing with the complexity of monitoring, scaling and updates, JaaS might be
-for you.
+`./android/scripts/release-sdk.sh /tmp/repo`
 
-[8x8 Jitsi as a Service (JaaS)](https://jaas.8x8.vc) is an enterprise-ready video meeting platform that allows developers, organizations and businesses to easily build and deploy video solutions. With Jitsi as a Service we now give you all the power of Jitsi running on our global platform so you can focus on building secure and branded video experiences.
+This will build and publish the SDK, and all of its dependencies to the specified Maven repository (/tmp/repo)
 
-## Documentation
+You're now ready to use the artifacts. In your project, add the Maven repository that you used above (/tmp/repo) into your top-level build.gradle file:
 
-All the Jitsi Meet documentation is available in [the handbook](https://jitsi.github.io/handbook/).
+`
+allprojects { 
+    repositories {
+        maven { url "file:/tmp/repo" }
+        google()
+        jcenter()
+    }
+}`
+You can use your local repository to replace the Jitsi repository (maven { url "https://github.com/jitsi/jitsi-maven-repository/raw/master/releases" }) when you published all subprojects. If you didn't do that, you'll have to add both repositories. Make sure your local repository is listed first!
 
-## Security
+Then, define the dependency org.jitsi.react:jitsi-meet-sdk into the build.gradle file of your module:
 
-For a comprehensive description of all Jitsi Meet's security aspects, please check [this link](https://jitsi.org/security).
+implementation ('org.jitsi.react:jitsi-meet-sdk:+') { transitive = true }
+Note that there should not be a need to explicitly add the other dependencies, as they will be pulled in as transitive dependencies of jitsi-meet-sdk.
 
-For a detailed description of Jitsi Meet's End-to-End Encryption (E2EE) implementation,
-please check [this link](https://jitsi.org/e2ee-whitepaper/).
 
-For information on reporting security vulnerabilities in Jitsi Meet, see [SECURITY.md](./SECURITY.md).
+##What is Customise in SDK
 
-## Contributing
+###Audio conference
 
-If you are looking to contribute to Jitsi Meet, first of all, thank you! Please
-see our [guidelines for contributing](CONTRIBUTING.md).
-
-<br />
-<br />
-
-<footer>
-<p align="center" style="font-size: smaller;">
-Built with ❤️ by the Jitsi team at <a href="https://8x8.com" target="_blank">8x8</a> and our community.
-</p>
-</footer>
+For audio conference, Jitsi default vidoe view size is set as 0 due to which view is not visible. 

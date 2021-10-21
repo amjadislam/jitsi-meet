@@ -48,4 +48,25 @@ public interface JitsiMeetViewListener {
      * @param data Map with a "url" key with the conference URL.
      */
     void onConferenceWillJoin(Map<String, Object> data);
+
+    /**
+     * Called when mic audio level changes.
+     *
+     * @param data Map with a "noisyMic" key with the mic noise changes.
+     */
+    void onNoisyMic(Map<String, Object> data);
+
+    /**
+     * Called when mic audio level changes.
+     *
+     * @param data Map with a "micAudioLevel" key with the mic audio changes.
+     */
+    void onTrackAudioLevelChanged(Map<String, Object> data);
+
+    /**
+     * Called when mic audio level changes.
+     *
+     * @param data Map with a "chatClosed" key with chat close status (always = 1).
+     */
+    void onChatScreenClosed(Map<String, Object> data);
 }

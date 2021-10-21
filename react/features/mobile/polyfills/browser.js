@@ -1,4 +1,3 @@
-import { DOMParser } from '@xmldom/xmldom';
 import { Platform } from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
 
@@ -92,6 +91,8 @@ function _visitNode(node, callback) {
 }
 
 (global => {
+    const { DOMParser } = require('xmldom');
+
     // DOMParser
     //
     // Required by:

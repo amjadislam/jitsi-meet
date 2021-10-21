@@ -44,7 +44,8 @@ import {
     SET_PASSWORD_FAILED,
     SET_ROOM,
     SET_PENDING_SUBJECT_CHANGE,
-    SET_START_MUTED_POLICY
+    SET_START_MUTED_POLICY,
+    TRACK_AUDIO_LEVEL_CHANGED
 } from './actionTypes';
 import {
     AVATAR_URL_COMMAND,
@@ -91,6 +92,24 @@ function _addConferenceListeners(conference, dispatch, state) {
         (...args) => {
             dispatch(conferenceTimestampChanged(0));
             dispatch(conferenceLeft(conference, ...args));
+        });
+    conference.on(
+        JitsiConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED,
+        (...args) => {
+            console.log('micId', args[0], 'audioLevel : ', args[1]);
+            dispatch({
+                type: TRACK_AUDIO_LEVEL_CHANGED,
+                arguments: args
+            });
+        });
+    conference.on(
+        JitsiConferenceEvents.NOISY_MIC, () => {
+            console.log('noisy mic');
+
+            // dispatch({
+            //     type: NOISY_MIC,
+            //     noisyMic: '1',
+            // })
         });
     conference.on(JitsiConferenceEvents.SUBJECT_CHANGED,
         (...args) => dispatch(conferenceSubjectChanged(...args)));

@@ -6,19 +6,11 @@ export const INDICATOR_COLOR = ColorPalette.lightGrey;
 
 export default {
 
-    headerArrowBack: {
-        marginLeft: 12
-    },
-
     indicatorWrapper: {
         alignItems: 'center',
         backgroundColor: ColorPalette.white,
         height: '100%',
         justifyContent: 'center'
-    },
-
-    sharedDocContainer: {
-        flex: 1
     },
 
     webView: {

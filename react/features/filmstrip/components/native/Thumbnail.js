@@ -245,9 +245,9 @@ class Thumbnail extends PureComponent<Props> {
             indicators.push(<Container
                 key = 'bottom-indicators'
                 style = { styles.thumbnailIndicatorContainer }>
-                { audioMuted && <AudioMutedIndicator /> }
-                { videoMuted && <VideoMutedIndicator /> }
-                { isScreenShare && <ScreenShareIndicator /> }
+                {/*{ audioMuted && <AudioMutedIndicator /> }*/}
+                {/*{ videoMuted && <VideoMutedIndicator /> }*/}
+                {/*{ isScreenShare && <ScreenShareIndicator /> }*/}
             </Container>);
         }
 
@@ -288,8 +288,9 @@ class Thumbnail extends PureComponent<Props> {
                 onLongPress = { this._onThumbnailLongPress }
                 style = { [
                     styles.thumbnail,
-                    _pinned && !tileView ? _styles.thumbnailPinned : null,
-                    styleOverrides
+                    // _pinned && !tileView ? _styles.thumbnailPinned : null,
+                    styleOverrides,
+                    {height: '100%'}
                 ] }
                 touchFeedback = { false }>
                 <ParticipantView

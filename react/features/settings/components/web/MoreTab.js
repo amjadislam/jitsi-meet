@@ -301,9 +301,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                     { t('settings.desktopShareFramerate') }
                 </h2>
                 <div className = 'dropdown-menu'>
-                    <TouchmoveHack
-                        flex = { true }
-                        isModal = { true }>
+                    <TouchmoveHack isModal = { true }>
                         <DropdownMenu
                             isOpen = { this.state.isFramerateSelectOpen }
                             onOpenChange = { this._onFramerateDropdownOpenChange }
@@ -386,9 +384,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                     { t('settings.language') }
                 </h2>
                 <div className = 'dropdown-menu'>
-                    <TouchmoveHack
-                        flex = { true }
-                        isModal = { true }>
+                    <TouchmoveHack isModal = { true }>
                         <DropdownMenu
                             isOpen = { this.state.isLanguageSelectOpen }
                             onOpenChange = { this._onLanguageDropdownOpenChange }

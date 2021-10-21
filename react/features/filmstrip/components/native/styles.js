@@ -116,8 +116,8 @@ export default {
         height: SMALL_THUMBNAIL_SIZE,
         justifyContent: 'center',
         margin: 2,
-        maxHeight: SMALL_THUMBNAIL_SIZE,
-        maxWidth: SMALL_THUMBNAIL_SIZE,
+        // maxHeight: SMALL_THUMBNAIL_SIZE,
+        // maxWidth: SMALL_THUMBNAIL_SIZE,
         overflow: 'hidden',
         position: 'relative',
         width: SMALL_THUMBNAIL_SIZE

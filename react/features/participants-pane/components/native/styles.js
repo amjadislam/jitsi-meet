@@ -165,13 +165,11 @@ export default {
     isLocal: {
         alignSelf: 'center',
         color: BaseTheme.palette.text01,
-        marginLeft: BaseTheme.spacing[1]
+        marginLeft: 4
     },
 
     participantsPane: {
-        backgroundColor: BaseTheme.palette.ui01,
-        flex: 1,
-        justifyContent: 'center'
+        backgroundColor: BaseTheme.palette.ui01
     },
 
     participantStatesContainer: {
@@ -198,12 +196,13 @@ export default {
         top: BaseTheme.spacing[1]
     },
 
-    lobbyListContainer: {
+    lobbyList: {
         position: 'relative'
     },
 
-    lobbyListDescription: {
-        ...participantListDescription
+    meetingList: {
+        position: 'relative',
+        marginTop: BaseTheme.spacing[3]
     },
 
     lobbyListDetails: {
@@ -217,8 +216,8 @@ export default {
         width: '100%'
     },
 
-    meetingListContainer: {
-        flex: 1
+    lobbyListDescription: {
+        ...participantListDescription
     },
 
     meetingListDescription: {
@@ -228,18 +227,21 @@ export default {
 
     footer: {
         alignItems: 'center',
+        backgroundColor: BaseTheme.palette.ui01,
+        bottom: BaseTheme.spacing[0],
+        display: 'flex',
         flexDirection: 'row',
-        paddingHorizontal: BaseTheme.spacing[3],
-        paddingVertical: BaseTheme.spacing[2]
-    },
-
-    headerCloseIcon: {
-        marginLeft: 12
+        height: BaseTheme.spacing[10],
+        justifyContent: 'space-between',
+        paddingRight: BaseTheme.spacing[3],
+        position: 'relative',
+        right: BaseTheme.spacing[0],
+        left: BaseTheme.spacing[0]
     },
 
     inviteButton: {
         backgroundColor: BaseTheme.palette.action01,
-        marginBottom: BaseTheme.spacing[4],
+        marginTop: BaseTheme.spacing[2],
         marginLeft: BaseTheme.spacing[3],
         marginRight: BaseTheme.spacing[3]
     },

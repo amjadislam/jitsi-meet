@@ -1,8 +1,29 @@
 // @flow
 
 import { translate } from '../../base/i18n';
-import { IconGauge } from '../../base/icons';
+import {
+    IconVideoQualityAudioOnly,
+    IconVideoQualityHD,
+    IconVideoQualityLD,
+    IconVideoQualitySD
+} from '../../base/icons';
+import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
+import { VIDEO_QUALITY_LEVELS } from '../constants';
+import { findNearestQualityLevel } from '../functions';
+
+/**
+ * A map of of selectable receive resolutions to corresponding icons.
+ *
+ * @private
+ * @type {Object}
+ */
+const VIDEO_QUALITY_TO_ICON = {
+    [VIDEO_QUALITY_LEVELS.ULTRA]: IconVideoQualityHD,
+    [VIDEO_QUALITY_LEVELS.HIGH]: IconVideoQualityHD,
+    [VIDEO_QUALITY_LEVELS.STANDARD]: IconVideoQualitySD,
+    [VIDEO_QUALITY_LEVELS.LOW]: IconVideoQualityLD
+};
 
 /**
  * The type of the React {@code Component} props of
@@ -36,10 +57,32 @@ type Props = AbstractButtonProps & {
  */
 class VideoQualityButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.callQuality';
-    label = 'videoStatus.performanceSettings';
-    tooltip = 'videoStatus.performanceSettings';
-    icon = IconGauge;
+    label = 'toolbar.callQuality';
+    tooltip = 'toolbar.callQuality';
 
+    /**
+     * Dynamically retrieves the icon.
+     */
+    get icon() {
+        const { _audioOnly, _videoQuality } = this.props;
+
+        const videoQualityLevel = findNearestQualityLevel(_videoQuality);
+
+        const icon = _audioOnly || !videoQualityLevel
+            ? IconVideoQualityAudioOnly
+            : VIDEO_QUALITY_TO_ICON[videoQualityLevel];
+
+        return icon;
+    }
+
+    /**
+     * Required by linter due to AbstractButton overwritten prop being writable.
+     *
+     * @param {string} value - The icon value.
+     */
+    set icon(value) {
+        return value;
+    }
 
     /**
      * Handles clicking / pressing the button.
@@ -59,4 +102,23 @@ class VideoQualityButton extends AbstractButton<Props, *> {
     }
 }
 
-export default translate(VideoQualityButton);
+/**
+ * Maps (parts of) the Redux state to the associated props for the
+ * {@code VideoQualityButton} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     _audioOnly: boolean,
+ *     _videoQuality: number
+ * }}
+ */
+function _mapStateToProps(state) {
+    return {
+        _audioOnly: state['features/base/audio-only'].enabled,
+        _videoQuality: state['features/video-quality'].preferredVideoQuality
+    };
+}
+
+export default translate(
+    connect(_mapStateToProps)(VideoQualityButton));

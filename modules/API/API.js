@@ -61,7 +61,7 @@ import {
     captureLargeVideoScreenshot,
     resizeLargeVideo
 } from '../../react/features/large-video/actions.web';
-import { toggleLobbyMode, setKnockingParticipantApproval } from '../../react/features/lobby/actions';
+import { toggleLobbyMode } from '../../react/features/lobby/actions';
 import { isForceMuted } from '../../react/features/participants-pane/functions';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
@@ -113,9 +113,6 @@ let videoAvailable = true;
  */
 function initCommands() {
     commands = {
-        'answer-knocking-participant': (id, approved) => {
-            APP.store.dispatch(setKnockingParticipantApproval(id, approved));
-        },
         'approve-video': participantId => {
             if (!isLocalParticipantModerator(APP.store.getState())) {
                 return;
@@ -1458,19 +1455,6 @@ class API {
             on,
             mode,
             error
-        });
-    }
-
-    /**
-     * Notify external application (if API is enabled) that a participant is knocking in the lobby.
-     *
-     * @param {Object} participant - Participant data such as id and name.
-     * @returns {void}
-     */
-    notifyKnockingParticipant(participant: Object) {
-        this._sendEvent({
-            name: 'knocking-participant',
-            participant
         });
     }
 

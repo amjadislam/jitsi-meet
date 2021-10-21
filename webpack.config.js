@@ -295,10 +295,6 @@ module.exports = (_env, argv) => {
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'app'),
                 new webpack.IgnorePlugin({
-                    resourceRegExp: /^canvas$/,
-                    contextRegExp: /resemblejs$/
-                }),
-                new webpack.IgnorePlugin({
                     resourceRegExp: /^\.\/locale$/,
                     contextRegExp: /moment$/
                 }),

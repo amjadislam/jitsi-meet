@@ -7,22 +7,17 @@ import {
     AbstractButton,
     type AbstractButtonProps
 } from '../../../base/toolbox/components';
-import { navigate } from '../../../conference/components/native/ConferenceNavigationContainerRef';
-import { screen } from '../../../conference/components/native/routes';
+import { openChat } from '../../actions.native';
 import { getUnreadCount } from '../../functions';
-
 
 type Props = AbstractButtonProps & {
 
     /**
-     * True if the polls feature is disabled.
-     */
-    _isPollsDisabled: boolean,
-
-    /**
      * The unread message count.
      */
-    _unreadMessageCount: number
+    _unreadMessageCount: number,
+
+    dispatch: Function
 };
 
 /**
@@ -41,9 +36,7 @@ class ChatButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        this.props._isPollsDisabled
-            ? navigate(screen.conference.chat)
-            : navigate(screen.conference.chatandpolls.main);
+        this.props.dispatch(openChat());
     }
 
     /**
@@ -66,11 +59,9 @@ class ChatButton extends AbstractButton<Props, *> {
  */
 function _mapStateToProps(state, ownProps) {
     const enabled = getFeatureFlag(state, CHAT_ENABLED, true);
-    const { disablePolls } = state['features/base/config'];
     const { visible = enabled } = ownProps;
 
     return {
-        _isPollsDisabled: disablePolls,
         _unreadMessageCount: getUnreadCount(state),
         visible
     };

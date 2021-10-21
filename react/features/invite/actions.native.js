@@ -3,10 +3,10 @@
 import type { Dispatch } from 'redux';
 
 import { getFeatureFlag, ADD_PEOPLE_ENABLED } from '../base/flags';
-import { navigate } from '../conference/components/native/ConferenceNavigationContainerRef';
-import { screen } from '../conference/components/native/routes';
+import { setActiveModalId } from '../base/modal';
 import { beginShareRoom } from '../share-room';
 
+import { ADD_PEOPLE_DIALOG_VIEW_ID } from './constants';
 import { isAddPeopleEnabled, isDialOutEnabled } from './functions';
 
 export * from './actions.any';
@@ -24,7 +24,7 @@ export function doInvitePeople() {
             && (isAddPeopleEnabled(state) || isDialOutEnabled(state));
 
         if (addPeopleEnabled) {
-            return navigate(screen.conference.invite);
+            return dispatch(setActiveModalId(ADD_PEOPLE_DIALOG_VIEW_ID));
         }
 
         return dispatch(beginShareRoom());

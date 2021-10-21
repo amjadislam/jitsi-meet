@@ -20,7 +20,9 @@ import {
     SET_PASSWORD,
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM,
-    SET_START_MUTED_POLICY
+    SET_START_MUTED_POLICY,
+    TRACK_AUDIO_LEVEL_CHANGED,
+    NOISY_MIC
 } from './actionTypes';
 import { isRoomValid } from './functions';
 
@@ -94,6 +96,25 @@ ReducerRegistry.register(
                 ...state,
                 startAudioMutedPolicy: action.startAudioMutedPolicy,
                 startVideoMutedPolicy: action.startVideoMutedPolicy
+            };
+
+        case TRACK_AUDIO_LEVEL_CHANGED:
+            console.log('micId', action.arguments[0], 'audioLevel : ', action.arguments[1]);
+            return {
+                ...state,
+                micId: action.arguments[0],
+                micAudioLevel: action.arguments[1]
+            };
+        case 'CHAT_SCREEN_CLOSED':
+            // console.log('chat closed action _ 1');
+            return {
+                ...state,
+                chatClosed: '1'
+            };
+        case NOISY_MIC:
+            return {
+                ...state,
+                noisyMic: action.noisyMic
             };
         }
 

@@ -1,7 +1,7 @@
 // @flow
 
+import { schemeColor } from '../../../base/color-scheme';
 import { ColorPalette, createStyleSheet } from '../../../base/styles';
-import BaseTheme from '../../../base/ui/components/BaseTheme';
 
 export const answerStyles = createStyleSheet({
     question: {
@@ -110,7 +110,6 @@ export const resultsStyles = createStyleSheet({
 
 export const chatStyles = createStyleSheet({
     messageFooter: {
-        flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -124,9 +123,9 @@ export const chatStyles = createStyleSheet({
 
     noPollText: {
         flex: 1,
-        color: BaseTheme.palette.ui05,
+        color: schemeColor('displayName'),
         textAlign: 'center',
-        paddingTop: '8%'
+        paddingTop: '10%'
     },
 
     pollItemContainer: {
@@ -166,17 +165,17 @@ export const chatStyles = createStyleSheet({
     },
 
     pollCreateAddButton: {
-        margin: BaseTheme.spacing[2]
+        margin: 8
     },
 
     toggleText: {
         color: ColorPalette.blue,
-        paddingTop: BaseTheme.spacing[3]
+        paddingTop: 16
     },
 
     createPollButton: {
         padding: 8,
-        margin: BaseTheme.spacing[2]
+        margin: 4
     },
 
     PollPane: {
@@ -184,13 +183,8 @@ export const chatStyles = createStyleSheet({
         padding: 8
     },
 
-    PollPaneContainer: {
-        flex: 1
-    },
-
     PollPaneContent: {
         justifyContent: 'space-between',
-        padding: BaseTheme.spacing[3],
         flex: 1
     },
 

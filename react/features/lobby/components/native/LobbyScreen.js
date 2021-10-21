@@ -2,12 +2,11 @@
 
 import React from 'react';
 import { Text, View, TouchableOpacity, TextInput } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Avatar } from '../../../base/avatar';
+import { CustomDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { Icon, IconEdit } from '../../../base/icons';
-import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import AbstractLobbyScreen, { _mapStateToProps } from '../AbstractLobbyScreen';
@@ -27,10 +26,9 @@ class LobbyScreen extends AbstractLobbyScreen {
         const { _meetingName, t } = this.props;
 
         return (
-            <JitsiScreen
-                hasTabNavigator = { false }
-                style = { styles.contentWrapper }>
-                <SafeAreaView>
+            <CustomDialog
+                onCancel = { this._onCancel }>
+                <View style = { styles.contentWrapper }>
                     <Text style = { styles.dialogTitle }>
                         { t(this._getScreenTitleKey()) }
                     </Text>
@@ -38,8 +36,8 @@ class LobbyScreen extends AbstractLobbyScreen {
                         { _meetingName }
                     </Text>
                     { this._renderContent() }
-                </SafeAreaView>
-            </JitsiScreen>
+                </View>
+            </CustomDialog>
         );
     }
 
@@ -236,13 +234,6 @@ class LobbyScreen extends AbstractLobbyScreen {
                         { t('lobby.enterPasswordButton') }
                     </Text>
                 </TouchableOpacity> }
-                <TouchableOpacity
-                    onPress = { this._onCancel }
-                    style = { styles.cancelButton }>
-                    <Text>
-                        { t('dialog.Cancel') }
-                    </Text>
-                </TouchableOpacity>
             </>
         );
     }

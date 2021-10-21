@@ -1,27 +1,44 @@
 // @flow
 
 import React from 'react';
-import { NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
+import { NativeModules, Platform, SafeAreaView, StatusBar, NativeEventEmitter, View } from 'react-native';
+
 
 import { appNavigate } from '../../../app/actions';
 import { PIP_ENABLED, FULLSCREEN_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { MEDIA_TYPE } from '../../../base/media';
+import { pinParticipant } from '../../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { TestConnectionInfo } from '../../../base/testing';
+import {
+    getTrackByMediaTypeAndParticipant,
+    isLocalCameraTrackMuted
+} from '../../../base/tracks';
+import {
+    widthPercentageToDP as wp,
+    heightPercentageToDP as hp
+} from '../../../base/util/responsiveLayout';
 import { ConferenceNotification, isCalendarEnabled } from '../../../calendar-sync';
+import { Chat } from '../../../chat';
 import { DisplayNameLabel } from '../../../display-name';
+import { SharedDocument } from '../../../etherpad';
 import {
     FILMSTRIP_SIZE,
     Filmstrip,
     isFilmstripVisible,
     TileView
 } from '../../../filmstrip';
-import { CalleeInfoContainer } from '../../../invite';
+import LocalThumbnail
+    from '../../../filmstrip/components/native/LocalThumbnail';
+import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
 import { KnockingParticipantList } from '../../../lobby';
+import { LobbyScreen } from '../../../lobby/components/native';
 import { getIsLobbyVisible } from '../../../lobby/functions';
 import { BackButtonRegistry } from '../../../mobile/back-button';
+import { ParticipantsPane } from '../../../participants-pane/components/native';
 import { Captions } from '../../../subtitles';
 import { setToolboxVisible } from '../../../toolbox/actions';
 import { Toolbox } from '../../../toolbox/components/native';
@@ -32,11 +49,10 @@ import {
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
 
-import { navigate } from './ConferenceNavigationContainerRef';
 import LonelyMeetingExperience from './LonelyMeetingExperience';
 import NavigationBar from './NavigationBar';
-import { screen } from './routes';
 import styles from './styles';
+import {muteLocal} from "../../../video-menu/actions.any";
 
 
 /**
@@ -136,24 +152,56 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {void}
      */
     componentDidMount() {
+        const { dispatch, _participants, _tracks } = this.props;
+
+        // TODO: This code is not working and only here for testing...
+        // const eventEmitter = new NativeEventEmitter();
+
+        // TODO: This code was causing issue with AudioCall Mode...
+        // setTimeout(() => dispatch(muteLocal(true, MEDIA_TYPE.AUDIO)), 4 * 1000);
+
+        // TODO: This code is not working and only here for testing...
+        // this.eventListener = eventEmitter.addListener('onMuteAllEvent', event => {
+        //     console.log('===> Event(onMuteAllEvent) Received!!!!!!', JSON.stringify(event));
+        //     console.log('===> Event(onMuteAllEvent) Received ===> ', JSON.parse(event).should_mute);
+        //
+        //     // if (event.call_status === '1') {
+        //     //     onCallAccepted(JSON.parse(event.call_data));
+        //     // }
+        // });
+
         BackButtonRegistry.addListener(this._onHardwareBackPress);
-    }
 
-    /**
-     * Implements {@code Component#componentDidUpdate}.
-     *
-     * @inheritdoc
-     */
-    componentDidUpdate(prevProps) {
-        const { _showLobby } = this.props;
+        // setTimeout(() => {
+        // if(!this.props._videoMuted) {
+        //     console.log('Must be broadcaster!');
+        //     if(_participants[0].pinned) {
+        //         console.log('Already Pinned!!!');
+        //     } else {
+        //         console.log(JSON.stringify(_participants[0]));
+        //         console.log('_participants[0].id: ',_participants[0].id,' Pinned!!!');
+        //         dispatch(pinParticipant(_participants[0].id));
+        //     }
+        // } else {
+        //     console.log('Listener!');
+        _participants.forEach((p, index) => {
+            const videoTrack
+                = getTrackByMediaTypeAndParticipant(_tracks, MEDIA_TYPE.VIDEO, p.id);
 
-        if (!prevProps._showLobby && _showLobby) {
-            navigate(screen.lobby);
-        }
+            if (!videoTrack.muted) {
+                dispatch(pinParticipant(p.id));
+            }
+        });
 
-        if (prevProps._showLobby && !_showLobby) {
-            navigate(screen.conference.main);
-        }
+        // }
+        // }, 5 * 1000);
+        //
+        // let context = this;
+        // setTimeout(() => {
+        //     context.props.dispatch({
+        //         type: 'TOGGLE_CHAT'
+        //     });
+        // }, 5000);
     }
 
     /**
@@ -165,6 +213,12 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {void}
      */
     componentWillUnmount() {
+        if (Platform.OS === 'android') {
+            // if (this.eventListener !== null) {
+            //     this.eventListener.remove();
+            // }
+        }
+
         // Tear handling any hardware button presses for back navigation down.
         BackButtonRegistry.removeListener(this._onHardwareBackPress);
     }
@@ -176,7 +230,11 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {ReactElement}
      */
     render() {
-        const { _fullscreenEnabled } = this.props;
+        const { _fullscreenEnabled, _showLobby } = this.props;
+
+        if (_showLobby) {
+            return <LobbyScreen />;
+        }
 
         return (
             <Container style = { styles.conference }>
@@ -229,6 +287,19 @@ class Conference extends AbstractConference<Props, *> {
     }
 
     /**
+     * Renders JitsiModals that are supposed to be on the conference screen.
+     *
+     * @returns {Array<ReactElement>}
+     */
+    _renderConferenceModals() {
+        return [
+            <AddPeopleDialog key = 'addPeopleDialog' />,
+            <Chat key = 'chat' />,
+            <SharedDocument key = 'sharedDocument' />
+        ];
+    }
+
+    /**
      * Renders the conference notification badge if the feature is enabled.
      *
      * @private
@@ -252,29 +323,34 @@ class Conference extends AbstractConference<Props, *> {
     _renderContent() {
         const {
             _connecting,
+            _isParticipantsPaneOpen,
             _largeVideoParticipantId,
-            _reducedUI,
+
+            // _reducedUI,
             _shouldDisplayTileView
         } = this.props;
 
-        if (_reducedUI) {
-            return this._renderContentForReducedUi();
-        }
+        // if (_reducedUI) {
+        //     return this._renderContentForReducedUi();
+        // }
 
         return (
             <>
                 {/*
                   * The LargeVideo is the lowermost stacking layer.
                   */
-                    _shouldDisplayTileView
-                        ? <TileView onClick = { this._onClick } />
-                        : <LargeVideo onClick = { this._onClick } />
+                    // _shouldDisplayTileView
+                    //     ? <TileView onClick = { this._onClick } />
+                    //     : <LargeVideo onClick = { this._onClick } />
+                    this.props._videoMuted
+                        ? <LargeVideo onClick = { this._onClick } />
+                        : <LocalThumbnail />
                 }
 
                 {/*
                   * If there is a ringing call, show the callee's info.
                   */
-                    <CalleeInfoContainer />
+                    // <CalleeInfoContainer />
                 }
 
                 {/*
@@ -291,29 +367,40 @@ class Conference extends AbstractConference<Props, *> {
                     pointerEvents = 'box-none'
                     style = { styles.toolboxAndFilmstripContainer }>
 
-                    <Captions onPress = { this._onClick } />
+                     {/*<Captions onPress = { this._onClick } />*/}
 
-                    { _shouldDisplayTileView || <Container style = { styles.displayNameContainer }>
-                        <DisplayNameLabel participantId = { _largeVideoParticipantId } />
-                    </Container> }
+                     {/*{ _shouldDisplayTileView || <Container style = { styles.displayNameContainer }>*/}
+                     {/*   <DisplayNameLabel participantId = { _largeVideoParticipantId } />*/}
+                     {/*</Container> }*/}
 
-                    <LonelyMeetingExperience />
+                     {/*<LonelyMeetingExperience />*/}
 
-                    { _shouldDisplayTileView || <><Filmstrip /><Toolbox /></> }
+                    <Toolbox />
+                    {/* { _shouldDisplayTileView*/}
+                    {/* || <>*/}
+                    {/*     <Filmstrip />*/}
+                    {/*    <Toolbox />*/}
+                    {/* </>*/}
+                    {/* }*/}
                 </View>
 
-                <SafeAreaView
-                    pointerEvents = 'box-none'
-                    style = { styles.navBarSafeView }>
-                    <NavigationBar />
-                    { this._renderNotificationsContainer() }
-                    <KnockingParticipantList />
-                </SafeAreaView>
+                 {/*<SafeAreaView*/}
+                 {/*   pointerEvents = 'box-none'*/}
+                 {/*   style = { styles.navBarSafeView }>*/}
+                 {/*   <NavigationBar />*/}
+                 {/*   { this._renderNotificationsContainer() }*/}
+                 {/*   <KnockingParticipantList />*/}
+                 {/*</SafeAreaView>*/}
 
-                <TestConnectionInfo />
-                { this._renderConferenceNotification() }
+                {/* <TestConnectionInfo />*/}
+                {/* { this._renderConferenceNotification() }*/}
 
-                {_shouldDisplayTileView && <Toolbox />}
+                {/* { this._renderConferenceModals() }*/}
+
+                {/* {_shouldDisplayTileView && <Toolbox />}*/}
+
+                {/* { _isParticipantsPaneOpen && <ParticipantsPane /> }*/}
+
             </>
         );
     }
@@ -398,6 +485,8 @@ class Conference extends AbstractConference<Props, *> {
  */
 function _mapStateToProps(state) {
     const { connecting, connection } = state['features/base/connection'];
+    const tracks = state['features/base/tracks'];
+    const participants = state['features/base/participants'];
     const {
         conference,
         joining,
@@ -418,6 +507,7 @@ function _mapStateToProps(state) {
     //   are leaving one.
     const connecting_
         = connecting || (connection && (!membersOnly && (joining || (!conference && !leaving))));
+    const { enabled, remoteParticipants } = state['features/filmstrip'];
 
     return {
         ...abstractMapStateToProps(state),
@@ -431,7 +521,12 @@ function _mapStateToProps(state) {
         _pictureInPictureEnabled: getFeatureFlag(state, PIP_ENABLED),
         _reducedUI: reducedUI,
         _showLobby: getIsLobbyVisible(state),
-        _toolboxVisible: isToolboxVisible(state)
+
+        // _toolboxVisible: isToolboxVisible(state),
+        _toolboxVisible: true,
+        _videoMuted: isLocalCameraTrackMuted(tracks),
+        _participants: remoteParticipants,
+        _tracks: tracks
     };
 }
 
