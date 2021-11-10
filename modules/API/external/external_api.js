@@ -24,7 +24,7 @@ const ALWAYS_ON_TOP_FILENAMES = [
 
 /**
  * Maps the names of the commands expected by the API with the name of the
- * commands expected by jitsi-meet
+ * commands expected by jitsi-meet.
  */
 const commands = {
     approveVideo: 'approve-video',
@@ -74,7 +74,7 @@ const commands = {
 
 /**
  * Maps the names of the events expected by the API with the name of the
- * events expected by jitsi-meet
+ * events expected by jitsi-meet.
  */
 const events = {
     'avatar-changed': 'avatarChanged',
@@ -110,6 +110,7 @@ const events = {
     'password-required': 'passwordRequired',
     'proxy-connection-event': 'proxyConnectionEvent',
     'raise-hand-updated': 'raiseHandUpdated',
+    'recording-link-available': 'recordingLinkAvailable',
     'recording-status-changed': 'recordingStatusChanged',
     'video-ready-to-close': 'readyToClose',
     'video-conference-joined': 'videoConferenceJoined',
@@ -126,7 +127,8 @@ const events = {
 };
 
 /**
- * Last id of api object
+ * Last id of api object.
+ *
  * @type {number}
  */
 let id = 0;
@@ -384,7 +386,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         }
 
         return ALWAYS_ON_TOP_FILENAMES.map(
-            filename => (new URL(filename, baseURL)).href
+            filename => new URL(filename, baseURL).href
         );
     }
 

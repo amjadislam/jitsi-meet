@@ -1,25 +1,28 @@
 // @flow
 
+import { makeStyles } from '@material-ui/styles';
 import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { rejectParticipantAudio } from '../../../av-moderation/actions';
+import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
 import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
 import { MEDIA_TYPE } from '../../../base/media';
 import {
     getParticipantCountWithFake
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import { normalizeAccents } from '../../../base/util/strings';
 import { showOverflowDrawer } from '../../../toolbox/functions';
 import { muteRemote } from '../../../video-menu/actions.any';
-import { findStyledAncestor, getSortedParticipantIds, shouldRenderInviteButton } from '../../functions';
+import { findAncestorByClass, getSortedParticipantIds, shouldRenderInviteButton } from '../../functions';
 import { useParticipantDrawer } from '../../hooks';
 
+import ClearableInput from './ClearableInput';
 import { InviteButton } from './InviteButton';
 import MeetingParticipantContextMenu from './MeetingParticipantContextMenu';
 import MeetingParticipantItems from './MeetingParticipantItems';
-import { Heading, ParticipantContainer } from './styled';
 
 type NullProto = {
     [key: string]: any,
@@ -41,6 +44,29 @@ type RaiseContext = NullProto | {|
 
 const initialState = Object.freeze(Object.create(null));
 
+const useStyles = makeStyles(theme => {
+    return {
+        heading: {
+            color: theme.palette.text02,
+            ...theme.typography.labelButton,
+            lineHeight: `${theme.typography.labelButton.lineHeight}px`,
+            margin: `8px 0 ${participantsPaneTheme.panePadding}px`,
+
+            [`@media(max-width: ${participantsPaneTheme.MD_BREAKPOINT})`]: {
+                ...theme.typography.labelButtonLarge,
+                lineHeight: `${theme.typography.labelButtonLarge.lineHeight}px`
+            }
+        }
+    };
+});
+
+type P = {
+    participantsCount: number,
+    showInviteButton: boolean,
+    overflowDrawer: boolean,
+    sortedParticipantIds: Array<string>
+};
+
 /**
  * Renders the MeetingParticipantList component.
  * NOTE: This component is not using useSelector on purpose. The child components MeetingParticipantItem
@@ -51,11 +77,12 @@ const initialState = Object.freeze(Object.create(null));
  *
  * @returns {ReactNode} - The component.
  */
-function MeetingParticipants({ participantsCount, showInviteButton, overflowDrawer, sortedParticipantIds = [] }) {
+function MeetingParticipants({ participantsCount, showInviteButton, overflowDrawer, sortedParticipantIds = [] }: P) {
     const dispatch = useDispatch();
     const isMouseOverMenu = useRef(false);
 
     const [ raiseContext, setRaiseContext ] = useState < RaiseContext >(initialState);
+    const [ searchString, setSearchString ] = useState('');
     const { t } = useTranslation();
 
     const lowerMenu = useCallback(() => {
@@ -63,7 +90,7 @@ function MeetingParticipants({ participantsCount, showInviteButton, overflowDraw
          * We are tracking mouse movement over the active participant item and
          * the context menu. Due to the order of enter/leave events, we need to
          * defer checking if the mouse is over the context menu with
-         * queueMicrotask
+         * queueMicrotask.
          */
         window.queueMicrotask(() => {
             if (isMouseOverMenu.current) {
@@ -79,7 +106,7 @@ function MeetingParticipants({ participantsCount, showInviteButton, overflowDraw
     const raiseMenu = useCallback((participantID, target) => {
         setRaiseContext({
             participantID,
-            offsetTarget: findStyledAncestor(target, ParticipantContainer)
+            offsetTarget: findAncestorByClass(target, 'list-item-container')
         });
     }, [ raiseContext ]);
 
@@ -119,10 +146,17 @@ function MeetingParticipants({ participantsCount, showInviteButton, overflowDraw
     const askUnmuteText = t('participantsPane.actions.askUnmute');
     const muteParticipantButtonText = t('dialog.muteParticipantButton');
 
+    const styles = useStyles();
+
     return (
         <>
-            <Heading>{t('participantsPane.headings.participantsList', { count: participantsCount })}</Heading>
+            <div className = { styles.heading }>
+                {t('participantsPane.headings.participantsList', { count: participantsCount })}
+            </div>
             {showInviteButton && <InviteButton />}
+            <ClearableInput
+                onChange = { setSearchString }
+                placeholder = { t('participantsPane.search') } />
             <div>
                 <MeetingParticipantItems
                     askUnmuteText = { askUnmuteText }
@@ -135,6 +169,7 @@ function MeetingParticipants({ participantsCount, showInviteButton, overflowDraw
                     participantIds = { sortedParticipantIds }
                     participantsCount = { participantsCount }
                     raiseContextId = { raiseContext.participantID }
+                    searchString = { normalizeAccents(searchString) }
                     toggleMenu = { toggleMenu }
                     youText = { youText } />
             </div>

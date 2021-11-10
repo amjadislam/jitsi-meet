@@ -5,5 +5,14 @@ module.exports = {
         'eslint-config-jitsi/jsdoc',
         'eslint-config-jitsi/react',
         '.eslintrc-react-native.js'
-    ]
+    ],
+    'rules': {
+        // XXX remove this eventually.
+        'react/jsx-indent-props': 0
+    },
+    'settings': {
+        'react': {
+            'version': 'detect'
+        }
+    }
 };

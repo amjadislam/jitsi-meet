@@ -26,13 +26,11 @@ export default {
     },
 
     clearButton: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginLeft: 5
+        paddingTop: 7
     },
 
     clearIcon: {
-        color: DARK_GREY,
+        color: BaseTheme.palette.ui02,
         fontSize: 18,
         textAlign: 'center'
     },
@@ -86,7 +84,9 @@ export default {
         color: DARK_GREY,
         flex: 1,
         fontSize: 17,
-        paddingVertical: 7
+        paddingVertical: 7,
+        paddingLeft: 0,
+        textAlign: 'left'
     },
 
     selectedIcon: {
@@ -103,11 +103,15 @@ export default {
     },
 
     searchFieldWrapper: {
+        backgroundColor: BaseTheme.palette.section01,
         alignItems: 'stretch',
         flexDirection: 'row',
-        height: 52,
-        paddingHorizontal: 15,
-        paddingVertical: 8
+        height: 36,
+        marginHorizontal: 15,
+        marginVertical: 8,
+        borderWidth: 0,
+        borderRadius: 10,
+        overflow: 'hidden'
     },
 
     searchIcon: {
@@ -117,9 +121,7 @@ export default {
 
     searchIconWrapper: {
         alignItems: 'center',
-        backgroundColor: FIELD_COLOR,
-        borderBottomLeftRadius: 10,
-        borderTopLeftRadius: 10,
+        backgroundColor: BaseTheme.palette.section01,
         flexDirection: 'row',
         justifyContent: 'center',
         width: ICON_SIZE + 16

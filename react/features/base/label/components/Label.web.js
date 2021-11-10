@@ -25,7 +25,7 @@ type Props = AbstractProps & {
 /**
  * React Component for showing short text in a circle.
  *
- * @extends Component
+ * @augments Component
  */
 export default class Label extends AbstractLabel<Props, *> {
     /**

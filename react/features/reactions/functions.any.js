@@ -55,10 +55,12 @@ export async function sendReactionsWebhook(state: Object, reactions: Array<?stri
     const { webhookProxyUrl: url } = state['features/base/config'];
     const { conference } = state['features/base/conference'];
     const { jwt } = state['features/base/jwt'];
+    const { connection } = state['features/base/connection'];
+    const jid = connection.getJid();
     const localParticipant = getLocalParticipant(state);
 
     const headers = {
-        'Authorization': `Bearer ${jwt}`,
+        ...jwt ? { 'Authorization': `Bearer ${jwt}` } : {},
         'Content-Type': 'application/json'
     };
 
@@ -68,8 +70,9 @@ export async function sendReactionsWebhook(state: Object, reactions: Array<?stri
         sessionId: conference.sessionId,
         submitted: Date.now(),
         reactions,
-        participantId: localParticipant.id,
-        participantName: localParticipant.name
+        participantId: localParticipant.jwtId,
+        participantName: localParticipant.name,
+        participantJid: jid
     };
 
     if (url) {

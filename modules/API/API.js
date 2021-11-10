@@ -1460,6 +1460,33 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the current recording link is
+     * available.
+     *
+     * @param {string} link - The recording download link.
+     * @returns {void}
+     */
+    notifyRecordingLinkAvailable(link: string) {
+        this._sendEvent({
+            name: 'recording-link-available',
+            link
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that a participant is knocking in the lobby.
+     *
+     * @param {Object} participant - Participant data such as id and name.
+     * @returns {void}
+     */
+    notifyKnockingParticipant(participant: Object) {
+        this._sendEvent({
+            name: 'knocking-participant',
+            participant
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that an error occured.
      *
      * @param {Object} error - The error.

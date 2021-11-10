@@ -76,7 +76,7 @@ type Props = {
  * Implements a React {@link Component} which displays a slider for selecting a
  * new receive video quality.
  *
- * @extends Component
+ * @augments Component
  */
 class VideoQualitySlider extends Component<Props> {
     _sliderOptions: Array<Object>;

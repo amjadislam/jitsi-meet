@@ -40,11 +40,44 @@ type Props = {
 }
 
 /**
- * A default header for modal-dialog components
+ * Creates the styles for the component.
  *
- * @export
+ * @param {Object} theme - The current UI theme.
+ *
+ * @returns {Object}
+ */
+const styles = theme => {
+    return {
+        closeButton: {
+            borderRadius: theme.shape.borderRadius,
+            cursor: 'pointer',
+            padding: 13,
+
+            [theme.breakpoints.down('480')]: {
+                background: theme.palette.action02
+            },
+
+            '&:hover': {
+                background: theme.palette.action02
+            }
+        },
+        header: {
+            boxShadow: 'none',
+
+            '& h4': {
+                ...withPixelLineHeight(theme.typography.heading5),
+                color: theme.palette.text01
+            }
+        }
+    };
+};
+
+
+/**
+ * A default header for modal-dialog components.
+ *
  * @class ModalHeader
- * @extends {React.Component<Props>}
+ * @augments {React.Component<Props>}
  */
 class ModalHeader extends React.Component<Props> {
     static defaultProps = {

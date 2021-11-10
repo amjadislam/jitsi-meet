@@ -32,7 +32,7 @@ type Props = {
     _headerStyles: Object,
 
     /**
-     * True if the chat window should be rendered.
+     * Default prop for navigation between screen components(React Navigation).
      */
     _isOpen: boolean,
 

@@ -279,6 +279,7 @@ var config = {
     //     autoHide: true,
     //     autoHideTimeout: 5000,
     //     disabled: false,
+    //     disableDetails: false,
     //     inactiveDisabled: false
     // },
 
@@ -917,6 +918,9 @@ var config = {
     // When true the user cannot add more images to be used as virtual background.
     // Only the default ones from will be available.
     // disableAddingBackgroundImages: false,
+
+    // Disables using screensharing as virtual background.
+    // disableScreensharingVirtualBackground: false,
 
     // Sets the background transparency level. '0' is fully transparent, '1' is opaque.
     // backgroundAlpha: 1,
