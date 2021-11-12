@@ -1,12 +1,12 @@
 // @flow
 
-import { CHAT_ENABLED, getFeatureFlag } from '../../base/flags';
-import { translate } from '../../base/i18n';
-import { IconMessage, IconReply } from '../../base/icons';
-import { getParticipantById } from '../../base/participants';
-import { connect } from '../../base/redux';
-import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
-import { openChat } from '../actions';
+import { CHAT_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { translate } from '../../../base/i18n';
+import { IconMessage, IconReply } from '../../../base/icons';
+import { getParticipantById } from '../../../base/participants';
+import { connect } from '../../../base/redux';
+import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { openChat } from '../../actions';
 
 export type Props = AbstractButtonProps & {
 
@@ -52,7 +52,7 @@ class PrivateMessageButton extends AbstractButton<Props, any> {
      * @returns {void}
      */
     _handleClick() {
-        const { dispatch, _participant } = this.props;
+        const { _participant, dispatch } = this.props;
 
         dispatch(openChat(_participant));
     }

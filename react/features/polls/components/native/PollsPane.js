@@ -6,6 +6,7 @@ import { View } from 'react-native';
 import { Button } from 'react-native-paper';
 
 import { BUTTON_MODES } from '../../../chat/constants';
+import { getUnreadPollCount } from '../../functions';
 import AbstractPollsPane from '../AbstractPollsPane';
 import type { AbstractProps } from '../AbstractPollsPane';
 
@@ -15,7 +16,11 @@ import { chatStyles } from './styles';
 
 const PollsPane = (props: AbstractProps) => {
 
-    const { createMode, onCreate, setCreateMode, t } = props;
+    useEffect(() => {
+        navigation.setOptions({
+            tabBarLabel: `${t('chat.tabs.polls')} ${nrUnreadPolls}`
+        });
+    }, [ nrUnreadPolls ]);
 
     return (
         <View style = { chatStyles.PollPane }>

@@ -20,6 +20,7 @@ import HorizontalDotsIcon from './HorizontalDotsIcon';
 import LobbyParticipantList from './LobbyParticipantList';
 import MeetingParticipantList from './MeetingParticipantList';
 import styles from './styles';
+import JitsiScreen from "../../../base/modal/components/JitsiScreen";
 
 /**
  * Participant pane.
@@ -36,11 +37,7 @@ const ParticipantsPane = () => {
     const { t } = useTranslation();
 
     return (
-        <JitsiModal
-            headerProps = {{
-                headerLabelKey: 'participantsPane.header'
-            }}
-            onClose = { closePane }
+        <JitsiScreen
             style = { styles.participantsPane }>
             <LobbyParticipantList />
             <MeetingParticipantList />
@@ -61,7 +58,7 @@ const ParticipantsPane = () => {
                         style = { styles.moreButton } />
                 </View>
             }
-        </JitsiModal>
+        </JitsiScreen>
     );
 };
 

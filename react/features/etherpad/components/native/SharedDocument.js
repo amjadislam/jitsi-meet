@@ -73,12 +73,9 @@ class SharedDocument extends PureComponent<Props> {
         const { _documentUrl } = this.props;
 
         return (
-            <JitsiModal
-                headerProps = {{
-                    headerLabelKey: 'documentSharing.title'
-                }}
-                modalId = { SHARE_DOCUMENT_VIEW_ID }
-                style = { styles.webView }>
+            <JitsiScreen
+                addHeaderHeightValue = { true }
+                style = { styles.sharedDocContainer }>
                 <WebView
                     onError = { this._onError }
                     renderLoading = { this._renderLoading }

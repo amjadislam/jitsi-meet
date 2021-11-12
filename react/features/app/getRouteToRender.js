@@ -9,25 +9,8 @@ import { toState } from '../base/redux';
 import { Conference } from '../conference';
 import { getDeepLinkingPage } from '../deep-linking';
 import { UnsupportedDesktopBrowser } from '../unsupported-browser';
-import {
-    BlankPage,
-    WelcomePage,
-    isWelcomePageAppEnabled,
-    isWelcomePageUserEnabled
-} from '../welcome';
 
-/**
- * Object describing application route.
- *
- * @typedef {Object} Route
- * @property {Component} component - React Component constructor.
- * @property {string|undefined} href - New location, in case navigation involves
- * a location change.
- */
-export type Route = {
-    component: Class<Component<*>>,
-    href: ?string
-};
+import { BlankPage, isWelcomePageUserEnabled, WelcomePage } from '../welcome';
 
 /**
  * Determines which route is to be rendered in order to depict a specific Redux

@@ -26,9 +26,9 @@ class LobbyScreen extends AbstractLobbyScreen {
         const { _meetingName, t } = this.props;
 
         return (
-            <CustomDialog
-                onCancel = { this._onCancel }>
-                <View style = { styles.contentWrapper }>
+            <JitsiScreen
+                style = { styles.contentWrapper }>
+                <SafeAreaView>
                     <Text style = { styles.dialogTitle }>
                         { t(this._getScreenTitleKey()) }
                     </Text>
